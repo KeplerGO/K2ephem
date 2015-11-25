@@ -27,7 +27,7 @@ PACKAGEDIR = os.path.dirname(os.path.abspath(__file__))
 
 # Which campaigns should we test visibility for?
 FIRST_CAMPAIGN = 0
-LAST_CAMPAIGN = 17  # Note that K2 may continue beyond this!
+LAST_CAMPAIGN = 13  # Note that K2 may continue beyond this!
 
 # When and where is K2 pointing?
 CAMPAIGNS = pd.read_csv(os.path.join(PACKAGEDIR, "k2-campaigns.csv"))
