@@ -2,12 +2,20 @@
 
 Requires Python 3!
 """
+from __future__ import print_function
+
 import os
 import sys
-from io import StringIO
-import urllib
 import argparse
 import logging
+from io import StringIO
+
+try:
+    # Python 3
+    from urllib.request import urlopen
+except ImportError:
+    # Legacy Python
+    from urllib2 import urlopen
 
 import pandas as pd
 
@@ -48,7 +56,7 @@ def jpl2pandas(fileobj):
     jpl = fileobj.readlines()
     logging.debug("JPL Horizons ephemeris contains {} lines.".format(len(jpl)))
     csv_started = False
-    csv = StringIO("")
+    csv = StringIO()
     for idx, line in enumerate(jpl):
         line = line.decode('utf-8')
         if line.startswith("$$EOE"):  # "End of ephemerides"
@@ -108,14 +116,10 @@ def get_ephemeris(target, start, stop, step_size=10):
     logging.info("Obtaining ephemeris for {target} "
                  "from JPL/Horizons.".format(**arg))
     url = HORIZONS_URL.format(**arg)
-    return urllib.request.urlopen(url)
+    return urlopen(url)
 
 
 def check_target(target, start=FIRST_CAMPAIGN, stop=LAST_CAMPAIGN):
-    # Prevent K2fov from printing stuff to stdout
-    actualstdout = sys.stdout
-    sys.stdout = StringIO()
-
     fileobj = get_ephemeris(target, start, stop)
     df = jpl2pandas(fileobj)
     visible_campaigns = []
@@ -131,10 +135,6 @@ def check_target(target, start=FIRST_CAMPAIGN, stop=LAST_CAMPAIGN):
         if visible:
             visible_campaigns.append(c)
             continue
-
-    # Restore stdout
-    sys.stdout = actualstdout
-
     return visible_campaigns
 
 

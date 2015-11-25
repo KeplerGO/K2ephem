@@ -5,8 +5,7 @@
 
 ## Installation
 
-A working version of Python 3 is required!
-
+You need to have a working version of Python installed.
 If this requirement is met, you can install `k2ephem`
 from the git repository as follows:
 ```
