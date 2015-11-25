@@ -2,6 +2,15 @@
 
 ***Checks  whether a Solar System body is (or was) observable by [NASA's K2 mission](http://keplerscience.arc.nasa.gov).***
 
+The JPL/Horizons ephemeris service can predict the position
+of Solar System bodies in the sky as seen from the Kepler/K2 spacecraft,
+provided the user enters `@-227` as the "Observer Location".
+(This is very important because Kepler is more than 0.5 AU away
+from the Earth!)
+
+This repository provides a command-line tool that uses the JPL/Horizons
+service to check whether a Soler System body is (or was) in the footprint
+of one of the past or future K2 Campaign fields.
 
 ## Installation
 
