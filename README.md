@@ -14,7 +14,6 @@ service to check whether a Solar System body is (or was) in the footprint
 of one of the past or future K2 Campaign fields.
 
 ## Installation
-
 You need to have a working version of Python installed.
 If this requirement is met, you can install `k2ephem`
 from the git repository as follows:
@@ -25,12 +24,14 @@ $ python setup.py install
 ```
 The `setup.py` script will automatically take care of installing two required dependencies (`K2fov` and `pandas`).
 
-
 ## Usage
-
 After installation, you can call `k2ephem` from the command line.
 For example, to verify whether comet *Chiron* can be observed by K2,
 simply type:
 ```
 $ k2ephem Chiron
 ```
+
+## Authors
+Created by Geert Barentsen (geert.barentsen at nasa.gov)
+on behalf of the Kepler/K2 Guest Observer Office.
