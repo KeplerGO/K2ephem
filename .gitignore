@@ -1,3 +1,4 @@
 sandbox
 *.pyc
 *.egg-info
+.cache

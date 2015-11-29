@@ -1,6 +1,7 @@
 # k2ephem
-
 ***Checks  whether a Solar System body is (or was) observable by [NASA's K2 mission](http://keplerscience.arc.nasa.gov).***
+
+[![Travis status](https://travis-ci.org/KeplerGO/K2ephem.svg)](https://travis-ci.org/KeplerGO/K2ephem)
 
 The [JPL/Horizons](http://ssd.jpl.nasa.gov/horizons.cgi)
 ephemeris service allows users to predict the position

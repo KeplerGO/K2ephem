@@ -23,11 +23,13 @@ from K2fov import fov
 from K2fov.K2onSilicon import getRaDecRollFromFieldnum, onSiliconCheck
 
 
+logging.basicConfig(level="DEBUG")
+
 PACKAGEDIR = os.path.dirname(os.path.abspath(__file__))
 
 # Which campaigns should we test visibility for?
 FIRST_CAMPAIGN = 0
-LAST_CAMPAIGN = 13  # Note that K2 may continue beyond this!
+LAST_CAMPAIGN = 18  # Note that K2 may continue beyond this!
 
 # When and where is K2 pointing?
 CAMPAIGNS = pd.read_csv(os.path.join(PACKAGEDIR, "k2-campaigns.csv"))
@@ -106,7 +108,8 @@ def create_fovobj(campaign):
     return fov.KeplerFov(ra, dec, fovRoll)
 
 
-def get_ephemeris(target, start, stop, step_size=10):
+def get_ephemeris(target, start, stop, step_size=5):
+    """Returns a file-like object containing the JPL/Horizons response.""" 
     arg = {
             "target": target,
             "start": CAMPAIGNS.loc[start]["start"],
@@ -126,10 +129,11 @@ def check_target(target, start=FIRST_CAMPAIGN, stop=LAST_CAMPAIGN):
     for c in range(start, stop + 1):
         visible = False
         fovobj = create_fovobj(c)
-        rows = df.loc[CAMPAIGNS.loc[c]["start"]:CAMPAIGNS.loc[c]["stop"]].iterrows()
-        for idx, row in rows:
+        campaign_ephem = df.loc[CAMPAIGNS.loc[c]["start"]:CAMPAIGNS.loc[c]["stop"]]
+        for idx, row in campaign_ephem.iterrows():
             if onSiliconCheck(row["ra"], row["dec"], fovobj):
                 logging.debug("{} is visible in C{}.".format(target, c))
+                logging.debug(campaign_ephem[["dra", "ddec"]])
                 visible = True
                 break
         if visible:
