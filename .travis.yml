@@ -5,6 +5,8 @@ python:
 - "3.5"
 - "nightly"
 install:
+# Use K2fov bleeding-edge master version to include its bugfixes
+- pip install git+git://github.com/KeplerGO/K2fov@master
 - python setup.py install
 script:
 - py.test
