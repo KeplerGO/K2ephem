@@ -17,8 +17,5 @@ setup(name='k2ephem',
       packages=['k2ephem'],
       data_files=[('k2ephem', ['k2ephem/k2-campaigns.csv'])],
       install_requires=["pandas", "K2fov"],
-      dependency_links=[
-          "git+ssh://git@github.com/KeplerGO/K2fov.git"
-      ],
       entry_points=entry_points,
       )
