@@ -3,7 +3,7 @@ from setuptools import setup
 
 # Command-line tools
 entry_points = {'console_scripts': [
-    'K2ephem = K2ephem.K2ephem:K2ephem_main'
+    'K2ephem = K2ephem:K2ephem_main'
 ]}
 
 setup(name='K2ephem',
@@ -15,7 +15,6 @@ setup(name='K2ephem',
       author='Geert Barentsen',
       author_email='geert.barentsen@nasa.gov',
       packages=['K2ephem'],
-      data_files=[('K2ephem', ['K2ephem/k2-campaigns.csv'])],
-      install_requires=["pandas", "K2fov"],
+      install_requires=["pandas>=0.16", "K2fov>=2.0"],
       entry_points=entry_points,
       )

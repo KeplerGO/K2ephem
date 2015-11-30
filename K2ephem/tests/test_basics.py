@@ -14,5 +14,7 @@ def test_planets():
     from K2ephem import check_target
     # We observed Pluto only in C7
     assert(check_target("999") == [7])
-    # Earth is only in the field during C9 and C17
-    assert(check_target("399") == [9, 17])
+    # Mars is in the field during C9 (and C17)
+    assert(9 in check_target("499"))
+    # Barentsen is only in the field during C4
+    assert(check_target("Barentsen") == [4])

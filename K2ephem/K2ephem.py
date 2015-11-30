@@ -19,23 +19,22 @@ except ImportError:
 
 import pandas as pd
 
-from K2fov import fov
-from K2fov.K2onSilicon import getRaDecRollFromFieldnum, onSiliconCheck
+from K2fov.K2onSilicon import getFieldInfo, getKeplerFov, onSiliconCheck
 
 
-logging.basicConfig(level="DEBUG")
-
-PACKAGEDIR = os.path.dirname(os.path.abspath(__file__))
+logging.basicConfig(level="INFO")
 
 # Which campaigns should we test visibility for?
 FIRST_CAMPAIGN = 0
-LAST_CAMPAIGN = 18  # Note that K2 may continue beyond this!
-
-# When and where is K2 pointing?
-CAMPAIGNS = pd.read_csv(os.path.join(PACKAGEDIR, "k2-campaigns.csv"))
+LAST_CAMPAIGN = 13  # Note that K2 may continue beyond this!
 
 # Endpoint to obtain ephemerides from JPL/Horizons
-HORIZONS_URL = """http://ssd.jpl.nasa.gov/horizons_batch.cgi?batch=1&COMMAND=%27{target}%27&MAKE_EPHEM=%27YES%27%20&CENTER=%27500@-227%27&TABLE_TYPE=%27OBSERVER%27&START_TIME=%27{start}%27&STOP_TIME=%27{stop}%27&STEP_SIZE=%27{step_size}%20d%27%20&ANG_FORMAT=%27DEG%27QUANTITIES=%272,3,9%27&CSV_FORMAT=%27YES%27"""
+HORIZONS_URL = ("http://ssd.jpl.nasa.gov/horizons_batch.cgi?"
+                "batch=1&COMMAND=%27{target}%27&MAKE_EPHEM=%27YES%27%20&"
+                "CENTER=%27500@-227%27&TABLE_TYPE=%27OBSERVER%27&"
+                "START_TIME=%27{start}%27&STOP_TIME=%27{stop}%27&"
+                "STEP_SIZE=%27{step_size}%20d%27%20&ANG_FORMAT=%27DEG%27&"
+                "QUANTITIES=%272,3,9%27&CSV_FORMAT=%27YES%27""")
 
 
 class EphemFailure(Exception):
@@ -87,37 +86,35 @@ def jpl2pandas(fileobj):
     return df
 
 
-def create_fovobj(campaign):
-    """Returns a `K2fov.KeplerFov` object for a given campaign.
+def get_ephemeris(target, start, stop, step_size=5):
+    """Returns a file-like object containing the JPL/Horizons response.
 
     Parameters
     ----------
-    campaign : int
-        K2 Campaign number.
+    target : str
+
+    start : int
+        Ephemeris will begin at the beginning of Campaign number `start`.
+
+    stop : int
+        Ephemeris will end at the end of Campaign number `stop`.
+
+    step_size : int
+        Resolution of the ephemeris in number of days.
 
     Returns
     -------
-    fovobj : `K2fov.KeplerFov` object
-        Details the footprint of the requested K2 campaign.
+    ephemeris : file-like object.
+        Containing the response from JPL/Horizons.
     """
-    ra, dec, scRoll = getRaDecRollFromFieldnum(campaign)
-    # convert from SC roll to FOV coordinates
-    # do not use the fovRoll coords anywhere else
-    # they are internal to this script only
-    fovRoll = fov.getFovAngleFromSpacecraftRoll(scRoll)
-    return fov.KeplerFov(ra, dec, fovRoll)
-
-
-def get_ephemeris(target, start, stop, step_size=5):
-    """Returns a file-like object containing the JPL/Horizons response.""" 
     arg = {
             "target": target,
-            "start": CAMPAIGNS.loc[start]["start"],
-            "stop": CAMPAIGNS.loc[stop]["stop"],
+            "start": getFieldInfo(start)["start"],
+            "stop": getFieldInfo(stop)["stop"],
             "step_size": step_size
            }
-    logging.info("Obtaining ephemeris for {target} "
-                 "from JPL/Horizons.".format(**arg))
+    print("Obtaining ephemeris for {target} "
+          "from JPL/Horizons...".format(**arg))
     url = HORIZONS_URL.format(**arg)
     return urlopen(url)
 
@@ -128,8 +125,8 @@ def check_target(target, start=FIRST_CAMPAIGN, stop=LAST_CAMPAIGN):
     visible_campaigns = []
     for c in range(start, stop + 1):
         visible = False
-        fovobj = create_fovobj(c)
-        campaign_ephem = df.loc[CAMPAIGNS.loc[c]["start"]:CAMPAIGNS.loc[c]["stop"]]
+        fovobj = getKeplerFov(c)
+        campaign_ephem = df.loc[getFieldInfo(c)["start"]:getFieldInfo(c)["stop"]]
         for idx, row in campaign_ephem.iterrows():
             if onSiliconCheck(row["ra"], row["dec"], fovobj):
                 logging.debug("{} is visible in C{}.".format(target, c))
@@ -158,7 +155,9 @@ def K2ephem_main(args=None):
         campaigns = check_target(args.target)
         if len(campaigns) == 0:
             print("'{}' does not appear to be visible "
-                  "in the K2 campaigns planned so far.".format(args.target))
+                  "in K2 campaigns {}-{}.".format(args.target,
+                                                  FIRST_CAMPAIGN,
+                                                  LAST_CAMPAIGN))
         else:
             print("Object '{}' is visible in Campaigns {}.".format(args.target,
                                                                    str(campaigns)))
