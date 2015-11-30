@@ -3,10 +3,10 @@ from setuptools import setup
 
 # Command-line tools
 entry_points = {'console_scripts': [
-    'k2ephem = k2ephem.k2ephem:k2ephem_main'
+    'K2ephem = K2ephem.K2ephem:K2ephem_main'
 ]}
 
-setup(name='k2ephem',
+setup(name='K2ephem',
       version='1.0.0',
       description="Check if a Solar System object is "
                   "(or was) observable by NASA's K2 mission. "
@@ -14,8 +14,8 @@ setup(name='k2ephem',
                   "to find out.",
       author='Geert Barentsen',
       author_email='geert.barentsen@nasa.gov',
-      packages=['k2ephem'],
-      data_files=[('k2ephem', ['k2ephem/k2-campaigns.csv'])],
+      packages=['K2ephem'],
+      data_files=[('K2ephem', ['K2ephem/k2-campaigns.csv'])],
       install_requires=["pandas", "K2fov"],
       entry_points=entry_points,
       )

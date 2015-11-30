@@ -142,7 +142,7 @@ def check_target(target, start=FIRST_CAMPAIGN, stop=LAST_CAMPAIGN):
     return visible_campaigns
 
 
-def k2ephem_main(args=None):
+def K2ephem_main(args=None):
     """Exposes k2ephem to the command line."""
     parser = argparse.ArgumentParser(
                     description="Check if a Solar System object is "
@@ -169,4 +169,4 @@ def k2ephem_main(args=None):
 
 
 if __name__ == "__main__":
-    k2ephem_main()
+    K2ephem_main()
