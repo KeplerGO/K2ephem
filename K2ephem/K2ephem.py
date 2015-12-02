@@ -108,7 +108,7 @@ def get_ephemeris(target, start, stop, step_size=5):
         Containing the response from JPL/Horizons.
     """
     arg = {
-            "target": target,
+            "target": target.replace(" ", "%20"),
             "start": getFieldInfo(start)["start"],
             "stop": getFieldInfo(stop)["stop"],
             "step_size": step_size
