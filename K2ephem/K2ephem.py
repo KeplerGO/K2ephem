@@ -1,7 +1,4 @@
-"""Checks whether a Solar System Body is in a future K2 field of view.
-
-Requires Python 3!
-"""
+"""Checks whether a Solar System Body is in a past or future K2 field of view."""
 from __future__ import print_function
 
 import os
