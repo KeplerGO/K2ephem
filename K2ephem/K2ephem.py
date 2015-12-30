@@ -16,17 +16,13 @@ except ImportError:
     from urllib2 import urlopen
 
 import pandas as pd
-import matplotlib.pyplot as pl
 
+import K2fov
 from K2fov.K2onSilicon import onSiliconCheck
-from K2fov import projection
-from K2fov import getFieldInfo, getKeplerFov
 
 
 logging.basicConfig(level="INFO")
 
-# Which campaigns should we test visibility for?
-FIRST_CAMPAIGN = 0
 LAST_CAMPAIGN = 18  # Note that K2 may continue beyond this!
 
 # Endpoint to obtain ephemerides from JPL/Horizons
@@ -87,18 +83,18 @@ def jpl2pandas(fileobj):
     return df
 
 
-def get_ephemeris(target, start, stop, step_size=5):
+def get_ephemeris(target, first, last, step_size=5):
     """Returns a file-like object containing the JPL/Horizons response.
 
     Parameters
     ----------
     target : str
 
-    start : int
-        Ephemeris will begin at the beginning of Campaign number `start`.
+    first : int
+        Ephemeris will begin at the beginning of Campaign number `first`.
 
-    stop : int
-        Ephemeris will end at the end of Campaign number `stop`.
+    last : int
+        Ephemeris will end at the end of Campaign number `last`.
 
     step_size : int
         Resolution of the ephemeris in number of days.
@@ -110,8 +106,8 @@ def get_ephemeris(target, start, stop, step_size=5):
     """
     arg = {
             "target": target.replace(" ", "%20"),
-            "start": getFieldInfo(start)["start"],
-            "stop": getFieldInfo(stop)["stop"],
+            "start": K2fov.getFieldInfo(first)["start"],
+            "stop": K2fov.getFieldInfo(last)["stop"],
             "step_size": step_size
            }
     print("Obtaining ephemeris for {target} "
@@ -120,15 +116,17 @@ def get_ephemeris(target, start, stop, step_size=5):
     return urlopen(url)
 
 
-def check_target(target, start=FIRST_CAMPAIGN, stop=LAST_CAMPAIGN, create_plot=False):
-    fileobj = get_ephemeris(target, start, stop)
+def check_target(target, first=0, last=LAST_CAMPAIGN, create_plot=False):
+    K2fov.logger.disabled = True  # Disable warning messages about prelim fields
+    fileobj = get_ephemeris(target, first, last)
     ephem = jpl2pandas(fileobj)
     visible_campaigns = []
-    for c in range(start, stop + 1):
+    for c in range(first, last + 1):
         visible = False
-        fovobj = getKeplerFov(c)
-        campaign_ephem = ephem.loc[getFieldInfo(c)["start"]:getFieldInfo(c)["stop"]]
+        fovobj = K2fov.getKeplerFov(c)
+        campaign_ephem = ephem.loc[K2fov.getFieldInfo(c)["start"]:K2fov.getFieldInfo(c)["stop"]]
         if create_plot:
+            import matplotlib.pyplot as pl
             ph = projection.PlateCaree()
             #k.plotPointing(ph, showOuts=False, plot_degrees=False)
             pl.figure()
@@ -150,6 +148,7 @@ def check_target(target, start=FIRST_CAMPAIGN, stop=LAST_CAMPAIGN, create_plot=F
         if visible:
             visible_campaigns.append(c)
             continue
+    K2fov.logger.disabled = False
     return visible_campaigns
 
 
@@ -163,15 +162,19 @@ def K2ephem_main(args=None):
     parser.add_argument('target',
                         help="Name of the target. "
                              "Must be known to JPL/Horizons.")
+    parser.add_argument('--first', metavar='campaign', type=int, default=0,
+                        help='First campaign to check (default: 0)')
+    parser.add_argument('--last', metavar='campaign', type=int, default=LAST_CAMPAIGN,
+                        help='Final campaign to check (default: {})'.format(LAST_CAMPAIGN))
     args = parser.parse_args(args)
 
     try:
-        campaigns = check_target(args.target)
+        campaigns = check_target(args.target, first=args.first, last=args.last)
         if len(campaigns) == 0:
             print("'{}' does not appear to be visible "
                   "in K2 campaigns {}-{}.".format(args.target,
-                                                  FIRST_CAMPAIGN,
-                                                  LAST_CAMPAIGN))
+                                                  args.first,
+                                                  args.last))
         else:
             print("Object '{}' is visible in Campaigns {}.".format(args.target,
                                                                    str(campaigns)))
