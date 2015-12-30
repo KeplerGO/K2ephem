@@ -15,6 +15,6 @@ setup(name='K2ephem',
       author='Geert Barentsen',
       author_email='geert.barentsen@nasa.gov',
       packages=['K2ephem'],
-      install_requires=["pandas>=0.16", "K2fov>=2.0"],
+      install_requires=["pandas>=0.16", "K2fov>=3.0"],
       entry_points=entry_points,
       )
