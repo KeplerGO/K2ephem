@@ -7,7 +7,7 @@ entry_points = {'console_scripts': [
 ]}
 
 setup(name='K2ephem',
-      version='1.0.0',
+      version='1.1.0',
       description="Check if a Solar System object is "
                   "(or was) observable by NASA's K2 mission. "
                   "This command will query JPL/Horizons "
