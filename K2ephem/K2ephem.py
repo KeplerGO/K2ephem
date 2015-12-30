@@ -18,15 +18,18 @@ except ImportError:
     from urllib2 import urlopen
 
 import pandas as pd
+import matplotlib.pyplot as pl
 
-from K2fov.K2onSilicon import getFieldInfo, getKeplerFov, onSiliconCheck
+from K2fov.K2onSilicon import onSiliconCheck
+from K2fov import projection
+from K2fov import getFieldInfo, getKeplerFov
 
 
 logging.basicConfig(level="INFO")
 
 # Which campaigns should we test visibility for?
 FIRST_CAMPAIGN = 0
-LAST_CAMPAIGN = 13  # Note that K2 may continue beyond this!
+LAST_CAMPAIGN = 18  # Note that K2 may continue beyond this!
 
 # Endpoint to obtain ephemerides from JPL/Horizons
 HORIZONS_URL = ("http://ssd.jpl.nasa.gov/horizons_batch.cgi?"
@@ -108,7 +111,7 @@ def get_ephemeris(target, start, stop, step_size=5):
         Containing the response from JPL/Horizons.
     """
     arg = {
-            "target": target,
+            "target": target.replace(" ", "%20"),
             "start": getFieldInfo(start)["start"],
             "stop": getFieldInfo(stop)["stop"],
             "step_size": step_size
@@ -119,14 +122,27 @@ def get_ephemeris(target, start, stop, step_size=5):
     return urlopen(url)
 
 
-def check_target(target, start=FIRST_CAMPAIGN, stop=LAST_CAMPAIGN):
+def check_target(target, start=FIRST_CAMPAIGN, stop=LAST_CAMPAIGN, create_plot=False):
     fileobj = get_ephemeris(target, start, stop)
-    df = jpl2pandas(fileobj)
+    ephem = jpl2pandas(fileobj)
     visible_campaigns = []
     for c in range(start, stop + 1):
         visible = False
         fovobj = getKeplerFov(c)
-        campaign_ephem = df.loc[getFieldInfo(c)["start"]:getFieldInfo(c)["stop"]]
+        campaign_ephem = ephem.loc[getFieldInfo(c)["start"]:getFieldInfo(c)["stop"]]
+        if create_plot:
+            ph = projection.PlateCaree()
+            #k.plotPointing(ph, showOuts=False, plot_degrees=False)
+            pl.figure()
+            fovobj.plotOutline(ph)
+            pl.plot(campaign_ephem["ra"], campaign_ephem["dec"],
+                    color="black", lw=3)
+            pl.xlim([0, 360])
+            pl.ylim([-30, 30])
+            plot_fn = "{}-c{}.png".format(target, c)
+            logging.info("Writing {}".format(plot_fn))
+            pl.savefig(plot_fn)
+            pl.close()
         for idx, row in campaign_ephem.iterrows():
             if onSiliconCheck(row["ra"], row["dec"], fovobj):
                 logging.debug("{} is visible in C{}.".format(target, c))
