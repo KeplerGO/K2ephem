@@ -1,4 +1,4 @@
-# K2ephem [![Travis status](https://travis-ci.org/KeplerGO/K2ephem.svg)](https://travis-ci.org/KeplerGO/K2ephem)
+# K2ephem [![PyPI](http://img.shields.io/pypi/v/K2ephem.svg)](https://pypi.python.org/pypi/K2ephem/) [![PyPI](http://img.shields.io/pypi/dm/K2ephem.svg)](https://pypi.python.org/pypi/K2ephem/) [![Travis status](https://travis-ci.org/KeplerGO/K2ephem.svg)](https://travis-ci.org/KeplerGO/K2ephem)
 ***Checks  whether a Solar System body is (or was) observable by [NASA's K2 mission](http://keplerscience.arc.nasa.gov).***
 
 The [JPL/Horizons](http://ssd.jpl.nasa.gov/horizons.cgi)
