@@ -14,7 +14,12 @@ of one of the past or future K2 Campaign fields.
 
 ## Installation
 You need to have a working version of Python installed.
-If this requirement is met, you can install `K2ephem`
+If this requirement is met, you can install the latest stable version
+of `K2ephem` using pip:
+```
+$ pip install K2ephem
+``
+Or you can install the most recent development version
 from the git repository as follows:
 ```
 $ git clone https://github.com/KeplerGO/K2ephem.git
