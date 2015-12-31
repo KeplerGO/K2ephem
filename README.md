@@ -1,16 +1,18 @@
 # K2ephem [![PyPI](http://img.shields.io/pypi/v/K2ephem.svg)](https://pypi.python.org/pypi/K2ephem/) [![PyPI](http://img.shields.io/pypi/dm/K2ephem.svg)](https://pypi.python.org/pypi/K2ephem/) [![Travis status](https://travis-ci.org/KeplerGO/K2ephem.svg)](https://travis-ci.org/KeplerGO/K2ephem)
 ***Checks  whether a Solar System body is (or was) observable by [NASA's K2 mission](http://keplerscience.arc.nasa.gov).***
 
-The [JPL/Horizons](http://ssd.jpl.nasa.gov/horizons.cgi)
-ephemeris service allows users to predict the position
-of Solar System bodies in the sky as seen from the Kepler/K2 spacecraft.
-This can be achieved by entering `@-227` as the "Observer Location".
-(Setting the location to be the Kepler spacecraft is *crucial*,
-because Kepler is more than 0.5 AU away from the Earth!)
+[NASA's K2 mission](http://keplerscience.arc.nasa.gov) is using 
+the unique assets of the repurposed Kepler space telescope 
+to perform long-baseline, high-cadence, high-precision photometry 
+of targets selected by the community. 
+Unlike the original Kepler mission, the loss of two reaction wheels 
+requires K2 to point near the ecliptic plane. 
+As a result, K2 can provide high-precision lightcurves 
+for large numbers of asteroids, comets, and (dwarf) planets.  
 
 This repository provides a command-line tool that uses the JPL/Horizons
 service to check whether a Solar System body is (or was) in the footprint
-of one of the past or future K2 Campaign fields.
+of one of the past or future [K2 Campaign fields](http://keplerscience.arc.nasa.gov/k2-fields.html).
 
 ## Installation
 You need to have a working version of Python installed.
@@ -35,6 +37,14 @@ simply type:
 ```
 K2ephem Chiron
 ```
+
+## Background
+The [JPL/Horizons](http://ssd.jpl.nasa.gov/horizons.cgi)
+ephemeris service allows users to predict the position
+of Solar System bodies in the sky as seen from the Kepler/K2 spacecraft.
+This can be achieved by entering `@-227` as the "Observer Location".
+Setting the location to be the Kepler spacecraft is *crucial*,
+because Kepler is more than 0.5 AU away from the Earth!
 
 ## Authors
 Created by Geert Barentsen (geert.barentsen at nasa.gov)
