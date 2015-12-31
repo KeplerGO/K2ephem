@@ -18,7 +18,7 @@ If this requirement is met, you can install the latest stable version
 of `K2ephem` using pip:
 ```
 $ pip install K2ephem
-``
+```
 Or you can install the most recent development version
 from the git repository as follows:
 ```
