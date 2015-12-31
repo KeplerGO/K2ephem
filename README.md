@@ -38,6 +38,23 @@ simply type:
 K2ephem Chiron
 ```
 
+Or you can type `K2ephem --help` to see the detailed usage instructions:
+```
+$ K2ephem --help
+usage: K2ephem [-h] [--first campaign] [--last campaign] target
+
+Check if a Solar System object is (or was) observable by NASA's K2 mission.
+This command will query JPL/Horizons to find out.
+
+positional arguments:
+  target            Name of the target. Must be known to JPL/Horizons.
+
+optional arguments:
+  -h, --help        show this help message and exit
+  --first campaign  First campaign to check (default: 0)
+  --last campaign   Final campaign to check (default: 18)
+```
+
 ## Background
 The [JPL/Horizons](http://ssd.jpl.nasa.gov/horizons.cgi)
 ephemeris service allows users to predict the position
@@ -48,4 +65,4 @@ because Kepler is more than 0.5 AU away from the Earth!
 
 ## Authors
 Created by Geert Barentsen (geert.barentsen at nasa.gov)
-on behalf of the Kepler/K2 Guest Observer Office.
+on behalf of the Kepler/K2 Guest Observer Office at NASA Ames.
