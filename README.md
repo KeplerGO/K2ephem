@@ -64,5 +64,5 @@ Setting the location to be the Kepler spacecraft is *crucial*,
 because Kepler is more than 0.5 AU away from the Earth!
 
 ## Authors
-Created by Geert Barentsen (geert.barentsen at nasa.gov)
-on behalf of the Kepler/K2 Guest Observer Office at NASA Ames.
+Created by Geert Barentsen.
+Please cite this tool in your publications.
