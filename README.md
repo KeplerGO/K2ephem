@@ -1,4 +1,4 @@
-# K2ephem [![PyPI](http://img.shields.io/pypi/v/K2ephem.svg)](https://pypi.python.org/pypi/K2ephem/) [![PyPI](http://img.shields.io/pypi/dm/K2ephem.svg)](https://pypi.python.org/pypi/K2ephem/) [![Travis status](https://travis-ci.org/KeplerGO/K2ephem.svg)](https://travis-ci.org/KeplerGO/K2ephem)
+# K2ephem [![PyPI](http://img.shields.io/pypi/v/K2ephem.svg)](https://pypi.python.org/pypi/K2ephem/) [![PyPI](http://img.shields.io/pypi/dm/K2ephem.svg)](https://pypi.python.org/pypi/K2ephem/) [![Travis status](https://travis-ci.org/KeplerGO/K2ephem.svg)](https://travis-ci.org/KeplerGO/K2ephem) [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.44363.svg)](http://dx.doi.org/10.5281/zenodo.44363)
 ***Checks  whether a Solar System body is (or was) observable by [NASA's K2 mission](http://keplerscience.arc.nasa.gov).***
 
 [NASA's K2 mission](http://keplerscience.arc.nasa.gov) is using 
@@ -63,6 +63,18 @@ This can be achieved by entering `@-227` as the "Observer Location".
 Setting the location to be the Kepler spacecraft is *crucial*,
 because Kepler is more than 0.5 AU away from the Earth!
 
-## Authors
-Created by Geert Barentsen.
-Please cite this tool in your publications.
+## Attribution
+Created by Geert Barentsen for the NASA Kepler/K2 Guest Observer Office.
+
+If this tool aided your research, please cite it using the [DOI identifier](http://dx.doi.org/10.5281/zenodo.44363)
+or the following BibTeX entry:
+```
+@misc{geert_barentsen_2016_44363,
+  author       = {Geert Barentsen},
+  title        = {K2ephem: v1.1.1},
+  month        = jan,
+  year         = 2016,
+  doi          = {10.5281/zenodo.44363},
+  url          = {http://dx.doi.org/10.5281/zenodo.44363}
+}
+```
