@@ -83,7 +83,7 @@ def jpl2pandas(fileobj):
     return df
 
 
-def get_ephemeris(target, first, last, step_size=5):
+def get_ephemeris(target, first, last, step_size=4):
     """Returns a file-like object containing the JPL/Horizons response.
 
     Parameters
@@ -116,8 +116,14 @@ def get_ephemeris(target, first, last, step_size=5):
     return urlopen(url)
 
 
-def check_target(target, first=0, last=LAST_CAMPAIGN, create_plot=False):
-    K2fov.logger.disabled = True  # Disable warning messages about prelim fields
+def check_target(target, first=0, last=LAST_CAMPAIGN, verbose=True, create_plot=False):
+    """
+    Returns
+    -------
+    visible_campaigns : list of int
+        List of campaign numbers in which the object is visible.
+    """
+    K2fov.logger.disabled = True  # Disable warnings about prelim fields
     fileobj = get_ephemeris(target, first, last)
     ephem = jpl2pandas(fileobj)
     visible_campaigns = []
@@ -127,14 +133,21 @@ def check_target(target, first=0, last=LAST_CAMPAIGN, create_plot=False):
         campaign_ephem = ephem.loc[K2fov.getFieldInfo(c)["start"]:K2fov.getFieldInfo(c)["stop"]]
         if create_plot:
             import matplotlib.pyplot as pl
+            from K2fov import projection
             ph = projection.PlateCaree()
-            #k.plotPointing(ph, showOuts=False, plot_degrees=False)
             pl.figure()
-            fovobj.plotOutline(ph)
+            fovobj.plotPointing(ph, showOuts=False)
             pl.plot(campaign_ephem["ra"], campaign_ephem["dec"],
                     color="black", lw=3)
-            pl.xlim([0, 360])
-            pl.ylim([-30, 30])
+            #plot_padding = 5
+            #pl.xlim([campaign_ephem["ra"].max() + plot_padding,
+            #         campaign_ephem["ra"].min() - plot_padding])
+            #pl.ylim([campaign_ephem["dec"].min() - plot_padding,
+            #         campaign_ephem["dec"].max() + plot_padding])
+            pl.xlabel('R.A. [degrees]')
+            pl.ylabel('Declination [degrees]')
+            pl.minorticks_on()
+            pl.title("Visibility of {0}".format(target))
             plot_fn = "{}-c{}.png".format(target, c)
             logging.info("Writing {}".format(plot_fn))
             pl.savefig(plot_fn)
@@ -147,6 +160,22 @@ def check_target(target, first=0, last=LAST_CAMPAIGN, create_plot=False):
                 break
         if visible:
             visible_campaigns.append(c)
+            if verbose:
+                motion = (campaign_ephem['dra']**2 +
+                          campaign_ephem['ddec']**2)**0.5
+                try:
+                    mag = campaign_ephem['mag']  # asteroid
+                except KeyError:
+                    mag = campaign_ephem['  T-mag']  # comet
+                if mag.dtype == float:  # can also be the string "n/a"
+                    min_mag, max_mag = mag.min(), mag.max()
+                else:
+                    min_mag, max_mag = -99.9, -99.9
+                print("Object '{}' is visible in C{} "
+                      "({:.1f}-{:.1f} mag; "
+                      "{:.1f}-{:.1f} arcsec/h).".format(target, c,
+                      min_mag, max_mag, motion.min(), motion.max())
+                      )
             continue
     K2fov.logger.disabled = False
     return visible_campaigns
@@ -169,18 +198,15 @@ def K2ephem_main(args=None):
     args = parser.parse_args(args)
 
     try:
-        campaigns = check_target(args.target, first=args.first, last=args.last)
+        campaigns = check_target(args.target, first=args.first, last=args.last, verbose=True)
         if len(campaigns) == 0:
             print("'{}' does not appear to be visible "
                   "in K2 campaigns {}-{}.".format(args.target,
                                                   args.first,
                                                   args.last))
-        else:
-            print("Object '{}' is visible in Campaigns {}.".format(args.target,
-                                                                   str(campaigns)))
     except EphemFailure:
         # Something went wrong while querying JPL/Horizons;
-        # an error message would have been logging at point of failure
+        # an error message would have been printed at the point of failure
         pass
 
 
