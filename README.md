@@ -23,7 +23,7 @@ $ pip install K2ephem
 ```
 If you have a previous version installed, you can upgrade it using:
 ```
-pip install K2fov --upgrade
+pip install K2ephem --upgrade
 ```
 Or you can install the most recent development version
 from the git repository as follows:
