@@ -195,10 +195,14 @@ def K2ephem_main(args=None):
                         help='First campaign to check (default: 0)')
     parser.add_argument('--last', metavar='campaign', type=int, default=LAST_CAMPAIGN,
                         help='Final campaign to check (default: {})'.format(LAST_CAMPAIGN))
+    parser.add_argument('-p', '--plot', action='store_true',
+                        help="Produce plot showing the object position "
+                             "with respect to each campaign.")
     args = parser.parse_args(args)
 
     try:
-        campaigns = check_target(args.target, first=args.first, last=args.last, verbose=True)
+        campaigns = check_target(args.target, first=args.first, last=args.last,
+                                 create_plot=args.plot, verbose=True)
         if len(campaigns) == 0:
             print("'{}' does not appear to be visible "
                   "in K2 campaigns {}-{}.".format(args.target,
