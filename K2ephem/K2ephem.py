@@ -2,8 +2,6 @@
 """
 from __future__ import print_function
 
-import os
-import sys
 import argparse
 import logging
 from io import StringIO
@@ -148,7 +146,7 @@ def check_target(target, first=0, last=LAST_CAMPAIGN, verbose=True, create_plot=
             pl.ylabel('Declination [degrees]')
             pl.minorticks_on()
             pl.title("Visibility of {0} in K2 C{1}".format(target, c))
-            plot_fn = "{}-c{}.png".format(target, c)
+            plot_fn = "{}-c{}.png".format(target.replace("/", "_"), c)
             print("Writing {}".format(plot_fn))
             pl.savefig(plot_fn)
             pl.close()

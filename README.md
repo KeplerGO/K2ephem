@@ -45,7 +45,7 @@ K2ephem Chiron
 Or you can type `K2ephem --help` to see the detailed usage instructions:
 ```
 $ K2ephem --help
-usage: K2ephem [-h] [--first campaign] [--last campaign] target
+usage: K2ephem [-h] [--first campaign] [--last campaign] [-p] target
 
 Check if a Solar System object is (or was) observable by NASA's K2 mission.
 This command will query JPL/Horizons to find out.
@@ -57,6 +57,8 @@ optional arguments:
   -h, --help        show this help message and exit
   --first campaign  First campaign to check (default: 0)
   --last campaign   Final campaign to check (default: 18)
+  -p, --plot        Produce plot showing the object position with respect to
+                    each campaign.
 ```
 
 ## Background
