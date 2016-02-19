@@ -146,7 +146,7 @@ def check_target(target, first=0, last=LAST_CAMPAIGN, verbose=True, create_plot=
             pl.ylabel('Declination [degrees]')
             pl.minorticks_on()
             pl.title("Visibility of {0}".format(target))
-            plot_fn = "{}-c{}.png".format(target, c)
+            plot_fn = "{}-c{}.png".format(target.replace("/", "_"), c)
             logging.info("Writing {}".format(plot_fn))
             pl.savefig(plot_fn)
             pl.close()
