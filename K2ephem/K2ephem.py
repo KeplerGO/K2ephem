@@ -147,9 +147,9 @@ def check_target(target, first=0, last=LAST_CAMPAIGN, verbose=True, create_plot=
             pl.xlabel('R.A. [degrees]')
             pl.ylabel('Declination [degrees]')
             pl.minorticks_on()
-            pl.title("Visibility of {0}".format(target))
+            pl.title("Visibility of {0} in K2 C{1}".format(target, c))
             plot_fn = "{}-c{}.png".format(target, c)
-            logging.info("Writing {}".format(plot_fn))
+            print("Writing {}".format(plot_fn))
             pl.savefig(plot_fn)
             pl.close()
         for idx, row in campaign_ephem.iterrows():
