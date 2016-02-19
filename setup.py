@@ -13,10 +13,9 @@ elif "publish-test" in sys.argv[-1]:
 # Load the __version__ variable without importing the package
 exec(open('K2ephem/version.py').read())
 
-# Command-line tools
-entry_points = {'console_scripts': [
-    'K2ephem = K2ephem:K2ephem_main'
-]}
+# Command-line tools; we're not using "entry_points" for now due to
+# a bug in pip which turns all the tools into lowercase
+scripts = ['scripts/K2ephem']
 
 setup(name='K2ephem',
       version=__version__,
@@ -29,7 +28,7 @@ setup(name='K2ephem',
       url='https://github.com/KeplerGO/K2ephem',
       packages=['K2ephem'],
       install_requires=["pandas>=0.16", "K2fov>=3.0"],
-      entry_points=entry_points,
+      scripts=scripts,
       classifiers=[
           "Development Status :: 5 - Production/Stable",
           "License :: OSI Approved :: MIT License",
