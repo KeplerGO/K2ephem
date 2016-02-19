@@ -10,13 +10,16 @@ elif "publish-test" in sys.argv[-1]:
     os.system("python setup.py sdist upload -r pypitest")
     sys.exit()
 
+# Load the __version__ variable without importing the package
+exec(open('K2ephem/version.py').read())
+
 # Command-line tools
 entry_points = {'console_scripts': [
     'K2ephem = K2ephem:K2ephem_main'
 ]}
 
 setup(name='K2ephem',
-      version='1.2.0',
+      version=__version__,
       description="Check if a Solar System object is "
                   "(or was) observable by NASA's K2 mission. "
                   "This command will query JPL/Horizons "
