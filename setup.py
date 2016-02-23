@@ -6,7 +6,7 @@ from setuptools import setup
 if "publish" in sys.argv[-1]:
     os.system("python setup.py sdist upload -r pypi")
     sys.exit()
-elif "publish-test" in sys.argv[-1]:
+elif "testpublish" in sys.argv[-1]:
     os.system("python setup.py sdist upload -r pypitest")
     sys.exit()
 
