@@ -144,6 +144,7 @@ def check_target(target, first=0, last=LAST_CAMPAIGN, verbose=True, create_plot=
             #         campaign_ephem["dec"].max() + plot_padding])
             pl.xlabel('R.A. [degrees]')
             pl.ylabel('Declination [degrees]')
+            pl.gca().invert_xaxis()
             pl.minorticks_on()
             pl.title("Visibility of {0} in K2 C{1}".format(target, c))
             plot_fn = "{}-c{}.png".format(target.replace("/", "_"), c)
