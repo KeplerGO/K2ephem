@@ -73,13 +73,17 @@ def jpl2pandas(fileobj):
         raise EphemFailure()
     csv.seek(0)
     df = pd.DataFrame.from_csv(csv)
-    # Rename the columns to make them easier to use
+    # Simplify column names for user-friendlyness;
+    # 'APmag' is the apparent magnitude which is returned for asteroids;
+    # 'Tmag' is the total magnitude returned for comets:
     df.index.name = 'date'
     df = df.rename(columns={'R.A._(a-app)': "ra",
                             ' DEC_(a-app)': "dec",
                             ' dRA*cosD': "dra",
                             'd(DEC)/dt': "ddec",
-                            '  APmag': "mag"})
+                            '  APmag': 'mag',
+                            '  T-mag': 'mag'})
+    # Add the angular motion column in units arcsec/h
     cosdec = np.cos(np.radians(df['dec']))
     df.loc[:, 'motion'] = ((df['dra'] * cosdec)**2 + df['ddec']**2)**0.5
     return df
@@ -170,10 +174,7 @@ def check_target(target, first=0, last=LAST_CAMPAIGN, verbose=True,
         if visible:
             visible_campaigns.append(c)
             if verbose:
-                try:
-                    mag = campaign_ephem['mag']  # asteroid
-                except KeyError:
-                    mag = campaign_ephem['  T-mag']  # comet
+                mag = campaign_ephem['mag']
                 if mag.dtype == float:  # can also be the string "n/a"
                     min_mag, max_mag = mag.min(), mag.max()
                 else:
