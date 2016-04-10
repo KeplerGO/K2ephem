@@ -13,6 +13,7 @@ except ImportError:
     # Legacy Python
     from urllib2 import urlopen
 
+import numpy as np
 import pandas as pd
 
 import K2fov
@@ -73,15 +74,18 @@ def jpl2pandas(fileobj):
     csv.seek(0)
     df = pd.DataFrame.from_csv(csv)
     # Rename the columns to make them easier to use
+    df.index.name = 'date'
     df = df.rename(columns={'R.A._(a-app)': "ra",
                             ' DEC_(a-app)': "dec",
                             ' dRA*cosD': "dra",
                             'd(DEC)/dt': "ddec",
                             '  APmag': "mag"})
+    cosdec = np.cos(np.radians(df['dec']))
+    df.loc[:, 'motion'] = ((df['dra'] * cosdec)**2 + df['ddec']**2)**0.5
     return df
 
 
-def get_ephemeris(target, first, last, step_size=4):
+def get_ephemeris_file(target, first, last, step_size=4):
     """Returns a file-like object containing the JPL/Horizons response.
 
     Parameters
@@ -114,7 +118,14 @@ def get_ephemeris(target, first, last, step_size=4):
     return urlopen(url)
 
 
-def check_target(target, first=0, last=LAST_CAMPAIGN, verbose=True, create_plot=False):
+def get_ephemeris_dataframe(target, first, last, step_size=4):
+    """Returns the ephemeris dataframe for a single campaign."""
+    fileobj = get_ephemeris_file(target, first, last, step_size)
+    return jpl2pandas(fileobj)
+
+
+def check_target(target, first=0, last=LAST_CAMPAIGN, verbose=True,
+                 create_plot=False, print_speed=True):
     """
     Returns
     -------
@@ -122,8 +133,7 @@ def check_target(target, first=0, last=LAST_CAMPAIGN, verbose=True, create_plot=
         List of campaign numbers in which the object is visible.
     """
     K2fov.logger.disabled = True  # Disable warnings about prelim fields
-    fileobj = get_ephemeris(target, first, last)
-    ephem = jpl2pandas(fileobj)
+    ephem = get_ephemeris_dataframe(target, first, last)
     visible_campaigns = []
     for c in range(first, last + 1):
         visible = False
@@ -160,8 +170,6 @@ def check_target(target, first=0, last=LAST_CAMPAIGN, verbose=True, create_plot=
         if visible:
             visible_campaigns.append(c)
             if verbose:
-                motion = (campaign_ephem['dra']**2 +
-                          campaign_ephem['ddec']**2)**0.5
                 try:
                     mag = campaign_ephem['mag']  # asteroid
                 except KeyError:
@@ -172,8 +180,13 @@ def check_target(target, first=0, last=LAST_CAMPAIGN, verbose=True, create_plot=
                     min_mag, max_mag = -99.9, -99.9
                 print("Object '{}' is visible in C{} "
                       "({:.1f}-{:.1f} mag; "
-                      "{:.1f}-{:.1f} arcsec/h).".format(target, c,
-                      min_mag, max_mag, motion.min(), motion.max())
+                      "{:.1f}-{:.1f} arcsec/h).".format(
+                          target,
+                          c,
+                          min_mag,
+                          max_mag,
+                          campaign_ephem['motion'].min(),
+                          campaign_ephem['motion'].max())
                       )
             continue
     K2fov.logger.disabled = False
