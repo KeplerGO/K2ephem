@@ -29,7 +29,7 @@ HORIZONS_URL = ("http://ssd.jpl.nasa.gov/horizons_batch.cgi?"
                 "batch=1&COMMAND=%27{target}%27&MAKE_EPHEM=%27YES%27%20&"
                 "CENTER=%27500@-227%27&TABLE_TYPE=%27OBSERVER%27&"
                 "START_TIME=%27{start}%27&STOP_TIME=%27{stop}%27&"
-                "STEP_SIZE=%27{step_size}%20d%27%20&ANG_FORMAT=%27DEG%27&"
+                "STEP_SIZE=%27{step_size}%27%20&ANG_FORMAT=%27DEG%27&"
                 "QUANTITIES=%272,3,9%27&CSV_FORMAT=%27YES%27""")
 
 
@@ -114,8 +114,10 @@ def get_ephemeris_file(target, first, last, step_size=4):
             "target": target.replace(" ", "%20"),
             "start": K2fov.getFieldInfo(first)["start"],
             "stop": K2fov.getFieldInfo(last)["stop"],
-            "step_size": step_size
+            "step_size": "{}%20d".format(step_size)
            }
+    if step_size < 1:  # Hack: support step-size in hours
+        arg['step_size'] = "{:.0f}%20h".format(step_size * 24)
     print("Obtaining ephemeris for {target} "
           "from JPL/Horizons...".format(**arg))
     url = HORIZONS_URL.format(**arg)
