@@ -30,7 +30,7 @@ HORIZONS_URL = ("http://ssd.jpl.nasa.gov/horizons_batch.cgi?"
                 "CENTER=%27500@-227%27&TABLE_TYPE=%27OBSERVER%27&"
                 "START_TIME=%27{start}%27&STOP_TIME=%27{stop}%27&"
                 "STEP_SIZE=%27{step_size}%27%20&ANG_FORMAT=%27DEG%27&"
-                "QUANTITIES=%272,3,9%27&CSV_FORMAT=%27YES%27""")
+                "QUANTITIES=%272,3,9%27&CSV_FORMAT=%27YES%27")
 
 
 class EphemFailure(Exception):
