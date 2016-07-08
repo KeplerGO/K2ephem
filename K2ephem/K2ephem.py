@@ -30,7 +30,7 @@ HORIZONS_URL = ("http://ssd.jpl.nasa.gov/horizons_batch.cgi?"
                 "CENTER=%27500@-227%27&TABLE_TYPE=%27OBSERVER%27&"
                 "START_TIME=%27{start}%27&STOP_TIME=%27{stop}%27&"
                 "STEP_SIZE=%27{step_size}%27%20&ANG_FORMAT=%27DEG%27&"
-                "QUANTITIES=%272,3,9%27&CSV_FORMAT=%27YES%27""")
+                "QUANTITIES=%271,3,9%27&CSV_FORMAT=%27YES%27""")
 
 
 class EphemFailure(Exception):
@@ -77,8 +77,8 @@ def jpl2pandas(fileobj):
     # 'APmag' is the apparent magnitude which is returned for asteroids;
     # 'Tmag' is the total magnitude returned for comets:
     df.index.name = 'date'
-    df = df.rename(columns={'R.A._(a-app)': "ra",
-                            ' DEC_(a-app)': "dec",
+    df = df.rename(columns={'R.A._(ICRF/J2000.0)': "ra",
+                            ' DEC_(ICRF/J2000.0)': "dec",
                             ' dRA*cosD': "dra",
                             'd(DEC)/dt': "ddec",
                             '  APmag': 'mag',
@@ -181,15 +181,21 @@ def check_target(target, first=0, last=LAST_CAMPAIGN, verbose=True,
                     min_mag, max_mag = mag.min(), mag.max()
                 else:
                     min_mag, max_mag = -99.9, -99.9
-                print("Object '{}' is visible in C{} "
-                      "({:.1f}-{:.1f} mag; "
-                      "{:.1f}-{:.1f} arcsec/h).".format(
+                print("Object '{}' is visible in C{} ("
+                      "mag {:.1f}..{:.1f}; "
+                      "{:.1f}..{:.1f}\"/h; "
+                      "ra {:.3f}..{:.3f}; "
+                      "dec {:.3f}..{:.3f}).".format(
                           target,
                           c,
                           min_mag,
                           max_mag,
                           campaign_ephem['motion'].min(),
-                          campaign_ephem['motion'].max())
+                          campaign_ephem['motion'].max(),
+                          campaign_ephem['ra'].min(),
+                          campaign_ephem['ra'].max(),
+                          campaign_ephem['dec'].min(),
+                          campaign_ephem['dec'].max())
                       )
             continue
     K2fov.logger.disabled = False
