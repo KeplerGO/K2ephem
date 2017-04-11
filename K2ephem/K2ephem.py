@@ -22,7 +22,7 @@ from K2fov.K2onSilicon import onSiliconCheck
 
 logging.basicConfig(level="INFO")
 
-LAST_CAMPAIGN = 18  # Note that K2 may continue beyond this!
+LAST_CAMPAIGN = 16  # Note that K2 may continue beyond this!
 
 # Endpoint to obtain ephemerides from JPL/Horizons
 HORIZONS_URL = ("http://ssd.jpl.nasa.gov/horizons_batch.cgi?"
