@@ -22,7 +22,7 @@ from K2fov.K2onSilicon import onSiliconCheck
 
 logging.basicConfig(level="INFO")
 
-LAST_CAMPAIGN = 16  # Note that K2 may continue beyond this!
+LAST_CAMPAIGN = 19  # Note that K2 may continue beyond this!
 
 # Endpoint to obtain ephemerides from JPL/Horizons
 HORIZONS_URL = ("http://ssd.jpl.nasa.gov/horizons_batch.cgi?"
@@ -116,6 +116,11 @@ def get_ephemeris_file(target, first, last, step_size=4):
             "stop": K2fov.getFieldInfo(last)["stop"],
             "step_size": "{}%20d".format(step_size)
            }
+    # If the target is a comet (i.e. name ends with "P"),
+    # then we need to add the "CAP" directive to to select
+    # the appropriate apparition.
+    if target.endswith("P"):
+        arg['target'] = "DES={}%3B%20CAP%3B".format(arg['target'])
     if step_size < 1:  # Hack: support step-size in hours
         arg['step_size'] = "{:.0f}%20h".format(step_size * 24)
     print("Obtaining ephemeris for {target} "
