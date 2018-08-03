@@ -25,7 +25,7 @@ logging.basicConfig(level="INFO")
 LAST_CAMPAIGN = 19  # Note that K2 may continue beyond this!
 
 # Endpoint to obtain ephemerides from JPL/Horizons
-HORIZONS_URL = ("http://ssd.jpl.nasa.gov/horizons_batch.cgi?"
+HORIZONS_URL = ("https://ssd.jpl.nasa.gov/horizons_batch.cgi?"
                 "batch=1&COMMAND=%27{target}%27&MAKE_EPHEM=%27YES%27%20&"
                 "CENTER=%27500@-227%27&TABLE_TYPE=%27OBSERVER%27&"
                 "START_TIME=%27{start}%27&STOP_TIME=%27{stop}%27&"
