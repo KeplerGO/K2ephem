@@ -4,4 +4,4 @@ sandbox
 *.pyc
 *.egg-info
 .cache
-.pytest-cache
+.pytest_cache
