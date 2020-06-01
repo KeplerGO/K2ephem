@@ -22,7 +22,7 @@ from K2fov.K2onSilicon import onSiliconCheck
 
 logging.basicConfig(level="INFO")
 
-LAST_CAMPAIGN = 20  # Note that K2 may continue beyond this!
+LAST_CAMPAIGN = 19  # Note that K2 may continue beyond this!
 
 # Endpoint to obtain ephemerides from JPL/Horizons
 HORIZONS_URL = ("https://ssd.jpl.nasa.gov/horizons_batch.cgi?"
@@ -72,20 +72,28 @@ def jpl2pandas(fileobj):
                       " Check their response above to understand why.")
         raise EphemFailure()
     csv.seek(0)
-    df = pd.DataFrame.from_csv(csv)
+    df = pd.read_csv(csv)
     # Simplify column names for user-friendlyness;
     # 'APmag' is the apparent magnitude which is returned for asteroids;
     # 'Tmag' is the total magnitude returned for comets:
-    df.index.name = 'date'
-    df = df.rename(columns={'R.A._(ICRF/J2000.0)': "ra",
-                            ' DEC_(ICRF/J2000.0)': "dec",
-                            ' dRA*cosD': "dra",
-                            'd(DEC)/dt': "ddec",
-                            '  APmag': 'mag',
-                            '  T-mag': 'mag'})
+    df = df.rename(columns={' Date__(UT)__HR:MN':'date',
+                            ' ':'junk',
+                            ' .1':'junk',
+                            ' R.A._(ICRF)':'ra',
+                            ' DEC_(ICRF)':'dec',
+                            '  dRA*cosD':'dra',
+                            ' d(DEC)/dt':'ddec',
+                            '   APmag':'mag',
+                            ' S-brt':'junk'})
+
     # Add the angular motion column in units arcsec/h
     cosdec = np.cos(np.radians(df['dec']))
     df.loc[:, 'motion'] = ((df['dra'] * cosdec)**2 + df['ddec']**2)**0.5
+    df = df[['date', 'ra', 'dec', 'dra', 'ddec', 'motion', 'mag']].reset_index(drop=True)
+
+    # Ensure the date is the index
+    df.loc[:, 'date'] = pd.to_datetime(df['date'])
+    df = df.set_index('date')
     return df
 
 
