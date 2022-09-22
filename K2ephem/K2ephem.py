@@ -72,19 +72,20 @@ def jpl2pandas(fileobj):
                       " Check their response above to understand why.")
         raise EphemFailure()
     csv.seek(0)
+
     df = pd.read_csv(csv)
     # Simplify column names for user-friendlyness;
     # 'APmag' is the apparent magnitude which is returned for asteroids;
     # 'Tmag' is the total magnitude returned for comets:
     df = df.rename(columns={' Date__(UT)__HR:MN':'date',
                             ' ':'junk',
-                            ' .1':'junk',
+                            ' ':'junk',
                             ' R.A._(ICRF)':'ra',
                             ' DEC_(ICRF)':'dec',
                             '  dRA*cosD':'dra',
                             ' d(DEC)/dt':'ddec',
-                            '   APmag':'mag',
-                            ' S-brt':'junk'})
+                            '    APmag':'mag',
+                            '  S-brt':'junk'})
 
     # Add the angular motion column in units arcsec/h
     cosdec = np.cos(np.radians(df['dec']))
